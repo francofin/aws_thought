@@ -1,0 +1,107 @@
+Cloud solutions that tailor their services to companies frequently follow the aaS (as a service) architecture, with three primary models: 
+infrastructure as a service (IaaS), platform as a service (PaaS), and software as a service (SaaS). 
+
+IAM, or Identity and Access Management, helps ensure secure access to AWS services and resources.
+ The IAM user console enables you to create and manage AWS users and groups as well as allow and deny access to AWS resources.
+
+EC2, or Elastic Compute Cloud, is a secure, scalable web service designed to simplify cloud computing. As the name suggests, 
+EC2 offers flexibility when you need to obtain and 
+configure capacity for your web applications. You’ll use EC2 to configure a Linux server to host your application.
+
+DynamoDB is a NoSQL key-value and document database that delivers incredibly fast performance—no matter the size of your data. 
+This fully managed and multi-region database provides built-in security, backup, 
+and in-memory caching for web applications. You’ll use DynamoDB as the database for your application in this course.
+
+pm2 is a Node.js production process manager that helps you manage your web application—and keep it live online. 
+You’ll use this package to keep your application running even after you’ve logged out of the server on EC2.
+
+nginx, sometimes stylized as NGINX or NginX, is a free and open-source web server that can also serve as a reverse proxy, 
+load balancer, mail proxy, or HTTP cache. You’ll use it as an application server to expose the EC2 instance to the internet.
+
+Hardware costs, rental space, and utilities have to be considered, as well as maintenance and data center operators to oversee both software and hardware.
+Cloud computing is the on-demand availability of computer system resources through the internet, 
+which enables companies to use remote data centers to serve applications on a pay-as-you-go basis.
+
+With cloud computing, a company can instead focus on their core competencies and 
+shift the administrative infrastructure and IT work onto a cloud provider.
+
+The private cloud has specific access points that only certain devices or IP addresses can enter.
+The public cloud, on the other hand, can be accessed from any device through any IP address
+ hybrid cloud combines features of public and private clouds—which is useful for organizations like a government agency that needs both high security to store private data and a public-facing interface for the community.
+ PaaS models are built for developers that don't have an IT administrative background and just want to plug-and-play.
+ The difference between PaaS and Saas is that SaaS is for end users.
+ In the PaaS model, the application is served to users through the cloud, which runs the application and stores the user's data, typically for a subscription fee. 
+ GitHub is an example of a SaaS, as many companies pay GitHub to secure their source code and use their tools.
+  Other popular SaaS companies include Zoom, Microsoft Office, Adobe, Salesforce, DoorDash, and Peloton.
+  The amazing profit margins that a SaaS company can attain demonstrates the economic feasibility of using cloud computing to deliver software solutions in a consistent and reliable manner.
+
+
+   Infrastructure-as-a Service, or IaaS. This model is used mainly by IT administrators and developers who are savvy with computer systems. 
+    IaaS resembles PaaS but offers more control in choosing computer system requirements such as operating system, networking, middleware, and runtime environments.
+We're almost finished setting up the AWS account, but we still have another important task to accomplish: creating the IAM user.
+ IAM stands for Identity and Access Management. This is the system that AWS has devised to set up permissions for their web services.
+ An IAM group is a set of service permissions that an IAM user can be assigned to, for quick access.
+
+ As discussed previously, having an effective security system in place is an integral part of using the cloud. 
+ AWS achieves this by having the IAM only allow access according to the services using IAM roles or grant permission to 
+ users with IAM users. An IAM group is a set of service permissions that an IAM user can be assigned to, for quick access.
+
+Activate Two-Step Authentication
+First we need to follow best practices by creating an MFA authentication step for the root user account. 
+To do that, follow these steps:
+
+To begin, let's navigate to the IAM console by typing "IAM" in the services input field.
+
+Select IAM to navigate to the IAM console.
+
+Select Dashboard in the side bar menu if you're not already on that page.
+
+In the Security Alert section, we'll see a warning that requests an MFA to be enabled. Select Enable MFA.
+
+Select the Activate MFA button.
+
+Select the Virtual MFA device, then select Continue.
+
+From the list of Virtual MFA Applications available, select the Google Authenticator.
+
+Add this app to your phone. If you don't have a phone available, skip this step.
+
+Once the app has been downloaded, scan the QR code.
+
+Insert two consecutive MFA codes into the input fields.
+
+Once the MFA authentication has been accepted, we can rest assured that even if the email and password 
+to the AWS account are compromised, this extra layer of security will prevent illicit access.
+
+Create an IAM User
+The next step is to create an new user. According to the AWS documentation, 
+"Don't use your AWS account root user credentials to access AWS, and don't give your credentials to anyone else. 
+Instead, create individual users for anyone who needs access to your AWS account."
+
+Follow these steps to create an IAM user:
+
+In the IAM console Dashboard, select the Users option in the left-hand menu.
+
+Select Add user.
+
+Enter the User name in the input field. Make sure to also copy down this information somewhere, as you do with other usernames and passwords.
+
+For Access type, select Programmatic access and AWS Management Console access.
+
+Create a password for this user. Make sure to also copy down this information somewhere, as you do with other usernames and passwords.
+
+Uncheck the box to prompt this user to create a new password.
+
+In the Set permission section, select "Create group".
+
+In the Group name input field, type Admins.
+
+Check the box for Administrator Access.
+
+Select the "Create group" button to add this user to the Admins security group.
+
+Select Next: Tags.
+
+Select Review.
+
+Select "Create user."
