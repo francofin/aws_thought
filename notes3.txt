@@ -1,0 +1,130 @@
+Create and Populate the Table Using DynamoDB
+First, we'll need to download the DynamoDB file and start a local instance of the database.
+
+Visit the AWS DynamoDB download page and select the zip file in the US region.
+
+Open the zip file to expand the folder.
+
+Open the CLI, navigate to where this folder is located, and cd into this folder.
+
+Run the following command:
+
+Copy
+java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
+On execution, you should see a message like the one shown in the following image:
+
+Nice work! Having a local DynamoDB instance is great for development work because we won't be interrupted
+
+ in case the internet connection is unstable or we need to pay for each read or write operation while in development.
+
+ run java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb to start instance of DynamoDB
+  let's discuss the components of a DynamoDB table. The following are the basic DynamoDB components:
+
+Tables: Similar to other database systems, DynamoDB stores data in tables. A table is a collection of data.
+
+Items: Each table contains zero or more items. An item is a group of attributes that is uniquely identifiable 
+among all of the other items. An item is similar to a row or record in SQL.
+
+Attributes: Each item is composed of one or more attributes. An attribute identifies the data element, such as a column in SQL.
+Just like primary keys in SQL, DynamoDB has partition keys. However, there is a key distinction between how they are used and how unique they must be.
+In SQL, the primary key uniquely identifies each row. In DynamoDB, the recommendation is to use an attribute 
+with a high degree of cardinality or uniqueness, but it isn't mandatory like it is in SQL
+
+This is because a sort key can be used in combination with the partition key to create a composite key. 
+The composite key will attribute uniqueness by using both attributes as identifiers.
+
+Here we'll be programmatically creating a new table in the local DynamoDB instance.
+
+At the top of the file, we'll be importing the aws-sdk package, as follows:
+const AWS = require('aws-sdk');
+Then we'll modify the AWS config object that DynamoDB will use to connect to the local instance, as shown in the following example:
+AWS.config.update({
+  region: "us-east-2",
+  endpoint: "http://localhost:8000"
+});
+
+Create the DynamoDB Service Object
+Next, create the DynamoDB service object by adding the following expression:
+const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+
+By specifying the API version in the preceding statement, we ensure that the API library we're
+using is compatible with the following commands. This is also the latest long-term support version, or LTS.
+It is important to note that we're using the DynamoDB class to create a service interface object, dynamodb.
+
+Create the params Object
+Next we'll create a params object that will hold the schema and metadata of the table, by adding the following code:
+
+Using an object-based key-pair definition, the keys indicate properties, and the values indicate the schema configurations.
+In the first line, we designate the table name as Thoughts.
+
+Next is the KeySchema property, which is where we define the partition key and the sort key. 
+Here we see that the partition key is defined as the KeyType: 
+"HASH" and the sort key is defined as the "RANGE". We'll use these terms interchangeably throughout this module.
+
+We defined the hash key as username and the range key as createdAt to create a unique composite key. 
+One benefit of using createdAt as the sort key is that queries will automatically sort by this value, 
+which conveniently orders thoughts by most recent entry.
+
+Next we see the AttributeDefinitions property. This defines the attributes we've used for the hash and range keys. 
+We must assign a data type to the attributes we've declared. W
+e assigned a string to the username and a number to createdAt, indicated by "S" and "N" respectively.
+
+Next is the ProvisionedThroughput property. This setting reserves a maximum write and read capacity of the database, which is how AWS factors in pricing.
+Notice that we only defined the keys for the Thoughts table. We didn't define any other attributes, such as the thought itself. 
+Unlike in a relational database, the schema does not have to be predefined. 
+Items in a DynamoDB table can have a different number of attributes, but they must have a partition key or composite key.
+
+Make a Call to the DynamoDB Instance to Create the Table
+Now that the params object is configured, we can use it to make a call to the DynamoDB instance and create a table, by adding the following code:
+
+dynamodb.createTable(params, (err, data) => {
+    if (err) {
+        console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+    }
+});
+
+Create another file in the db folder, called LoadThoughts.js, to load the seed data file.
+
+Again we'll use the aws-sdk to create the interface with DynamoDB. We'll also be using the file system package to read the users.json file, as shown in the following example:
+We'll use thnode ./server/db/CreateThoughtsTable.jse DocumentClient() class this time to create the dynamodb service object.
+This class offers a level of abstraction that enables us to use JavaScript objects as arguments and return native JavaScript types.
+This constructor helps map objects, which reduces impedance mismatching and speeds up the development process. 
+The relative path for the fs.readFileSync function is relative to where the file is executed, not the path between files. 
+In this case, the file path will work if this command is executed from the project's root directory.
+
+
+In the loop, we assigned the values from the array elements in the Item property.
+While still in the loop, we make a call to the database with the service interface object, dynamodb, as shown in the following code:
+In the preceding statement, we used the same pattern that we used to create the table, but this time we used the put method.
+
+
+node ./server/db/CreateThoughtsTable.js
+
+node ./server/db/LoadThoughts.js
+he endpoint property in awsConfig points to the local DynamoDB instance. We use the DocumentClient class to use native JavaScript 
+objects to interface with the dynamodb service object. We're also setting the table value to "Thoughts".
+
+In the preceding statement, we'll use the scan method to return all the items of the table.
+Notice that the data in the table is actually in the Items property of the response, so data.Items was returned.
+In the preceding route, we'll use query parameters to pass the username from the client to the server. We'll capture the query parameter with the req.params object.
+Next we'll declare params to define the query call to DynamoDB
+The KeyConditionExpression property specifies the search criteria.
+We need to retrieve all the thoughts from a specific user, so we used the = operator to specify all items that pertain to a single username.
+The #un and :user symbols are actually aliases that represent the attribute name and value.
+The #un represents the attribute name username. This is defined in the ExpressionAttributeNames property. 
+DynamoDB suggests using aliases as a best practice to avoid a list of reserved words from DynamoDB that can't be used as attribute names in the KeyConditionExpression.
+
+the ExpressionAttributeValues property is assigned to req.params.username, which was received from the client. 
+Next is the ProjectExpression property. This determines which attributes or columns will be returned.
+Last is the ScanIndexForward property. This property takes a Boolean value. 
+The default setting is true, which specifies the order for the sort key, which will be ascending.
+
+we set the ScanIndexForward property to false so that the order is descending.
+Let's use the service interface object, dynamodb, and the query method to retrieve the user's thoughts from the database, by running the following function call:
+Notice how we used the %20 escape symbol to allow a space between the first and last names of the users
+we set the params object to the form data of the ThoughtForm, which we can access with req.body
+Also notice that we use the JavaScript native Date object to set the value of the createdAt property.
+Notice that because we're using the DocumentClient() class to instantiate the service object, dynamodb, the request and response from the database are native JavaScript objects. 
+This greatly simplifies the code and improves the developer experience by sidestepping any impedance mismatch.

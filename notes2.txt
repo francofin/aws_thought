@@ -65,3 +65,21 @@ You should see a success message in the command line if you've successfully crea
 
 Let's verify that the bucket was created by going to the S3 console from the AWS Management Console in the browser, where we should see something like the following image:
 Congratulations, you've just connected to your first web service. With a successful connection, you confirmed that the aws-sdk could use the credentials that you configured, using the AWS-CLI to communicate with S3. This technique allows you to use the keys without exposing them in the code.
+
+In this lesson, we'll learn how to use another web service from AWS that's available to use in the free tier, 
+called DynamoDB. DynamoDB is a NoSQL database service that uses a 
+key-value method to store data. We'll replace the MongoDB database in the Deep Thoughts application with DynamoDB.
+
+DynamoDB has some special properties that makes it keenly suited for cloud computing on a large scale.
+The overlying philosophy in AWS is to provide web services that can handle millions of requests every hour. 
+DynamoDB, however, was made with high performance under extreme load conditions in mind.
+If we use a large-scale-first mentality when designing web applications, we can circumvent the technical debt of database migration by starting with a system that can handle a high request load.
+
+n the first step, we'll determine the access points of the data in the application. By access points, we mean which components
+ will need access to the data, how variable the queries will be, and what type of data the components will need.
+
+ DynamoDB is specialized for high performance at high request loads because of its ability to handle simple and repetitive queries.
+ For database queries that are very complex and dynamic in nature, we might need to leverage different databases, 
+ such as a relational database. AWS offers that in the form of RDS, or Relational Database Service.
+
+ 
